@@ -15,9 +15,9 @@ export const asyncRouterMap = [
       {
         path: '/dashboard',
         name: 'dashboard',
-        redirect: '/dashboard/workplace',
+        redirect: '/dashboard/analysis',
         component: RouteView,
-        meta: { title: '仪表盘', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
+        meta: { title: '用户数据', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
         children: [
           {
             path: '/dashboard/analysis',
@@ -35,6 +35,7 @@ export const asyncRouterMap = [
           {
             path: '/dashboard/workplace',
             name: 'Workplace',
+            hidden: true,
             component: () => import('@/views/dashboard/Workplace'),
             meta: { title: '工作台', keepAlive: true, permission: [ 'dashboard' ] }
           }
@@ -46,6 +47,7 @@ export const asyncRouterMap = [
         path: '/form',
         redirect: '/form/base-form',
         component: PageView,
+        hidden: true,
         meta: { title: '表单页', icon: 'form', permission: [ 'form' ] },
         children: [
           {
@@ -87,12 +89,14 @@ export const asyncRouterMap = [
           {
             path: '/list/tree-list',
             name: 'TreeList',
+            hidden: true,
             component: () => import('@/views/list/TreeList'),
             meta: { title: '树目录表格', keepAlive: true, permission: [ 'table' ] }
           },
           {
             path: '/list/edit-table',
             name: 'EditList',
+            hidden: true,
             component: () => import('@/views/list/TableInnerEditList'),
             meta: { title: '内联编辑表格', keepAlive: true, permission: [ 'table' ] }
           },
@@ -105,12 +109,14 @@ export const asyncRouterMap = [
           {
             path: '/list/role-list',
             name: 'RoleList',
+            hidden: true,
             component: () => import('@/views/list/RoleList'),
             meta: { title: '角色列表', keepAlive: true, permission: [ 'table' ] }
           },
           {
             path: '/list/system-role',
             name: 'SystemRole',
+            hidden: true,
             component: () => import('@/views/role/RoleList'),
             meta: { title: '角色列表2', keepAlive: true, permission: [ 'table' ] }
           },
@@ -123,12 +129,14 @@ export const asyncRouterMap = [
           {
             path: '/list/basic-list',
             name: 'BasicList',
+            hidden: true,
             component: () => import('@/views/list/StandardList'),
             meta: { title: '标准列表', keepAlive: true, permission: [ 'table' ] }
           },
           {
             path: '/list/card',
             name: 'CardList',
+            hidden: true,
             component: () => import('@/views/list/CardList'),
             meta: { title: '卡片列表', keepAlive: true, permission: [ 'table' ] }
           },
@@ -168,6 +176,7 @@ export const asyncRouterMap = [
         name: 'profile',
         component: RouteView,
         redirect: '/profile/basic',
+        hidden: true,
         meta: { title: '详情页', icon: 'profile', permission: [ 'profile' ] },
         children: [
           {
@@ -191,6 +200,7 @@ export const asyncRouterMap = [
         name: 'result',
         component: PageView,
         redirect: '/result/success',
+        hidden: true,
         meta: { title: '结果页', icon: 'check-circle-o', permission: [ 'result' ] },
         children: [
           {
@@ -214,6 +224,7 @@ export const asyncRouterMap = [
         name: 'exception',
         component: RouteView,
         redirect: '/exception/403',
+        hidden: true,
         meta: { title: '异常页', icon: 'warning', permission: [ 'exception' ] },
         children: [
           {
@@ -243,6 +254,7 @@ export const asyncRouterMap = [
         component: RouteView,
         redirect: '/account/center',
         name: 'account',
+        hidden: true,
         meta: { title: '个人页', icon: 'user', keepAlive: true, permission: [ 'user' ] },
         children: [
           {
@@ -299,6 +311,7 @@ export const asyncRouterMap = [
         path: '/other',
         name: 'otherPage',
         component: PageView,
+        hidden: true,
         meta: { title: '其他组件', icon: 'slack', permission: [ 'dashboard' ] },
         redirect: '/other/icon-selector',
         children: [
@@ -349,6 +362,7 @@ export const constantRouterMap = [
   {
     path: '/test',
     component: BlankLayout,
+    hidden: true,
     redirect: '/test/home',
     children: [
       {

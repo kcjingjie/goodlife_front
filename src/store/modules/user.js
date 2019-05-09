@@ -37,9 +37,11 @@ const user = {
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          const result = response.result
-          Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
+          const result = response.data
+          Vue.ls.set(ACCESS_TOKEN, result.token)
           commit('SET_TOKEN', result.token)
+          commit('SET_NAME', { name: result.name, welcome: welcome() })
+          commit('SET_AVATAR', "/avatar2.jpg")
           resolve()
         }).catch(error => {
           reject(error)
@@ -51,8 +53,7 @@ const user = {
     GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
-          const result = response.result
-
+          const result = response.data.result
           if (result.role && result.role.permissions.length > 0) {
             const role = result.role
             role.permissions = result.role.permissions
@@ -82,11 +83,12 @@ const user = {
     // 登出
     Logout ({ commit, state }) {
       return new Promise((resolve) => {
+        const paramter = new Object()
+        paramter.token = state.token
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         Vue.ls.remove(ACCESS_TOKEN)
-
-        logout(state.token).then(() => {
+        logout(paramter).then(() => {
           resolve()
         }).catch(() => {
           resolve()

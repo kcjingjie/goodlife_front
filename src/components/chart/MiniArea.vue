@@ -20,7 +20,6 @@ for (let i = 0; i < 10; i++) {
     y: Math.round(Math.random() * 10)
   })
 }
-
 const tooltip = [
   'x*y',
   (x, y) => ({

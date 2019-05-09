@@ -73,6 +73,7 @@
 </template>
 
 <script>
+import { asyncRouterMap } from '@/config/router.config'
 import SideMenu from '@/components/menu/SideMenu'
 import GlobalHeader from '@/components/page/GlobalHeader'
 import GlobalFooter from '@/components/page/GlobalFooter'
@@ -118,7 +119,10 @@ export default {
     }
   },
   created () {
+    this.menus = asyncRouterMap.find((item) => item.path === '/').children
+/*
     this.menus = this.mainMenu.find((item) => item.path === '/').children
+*/
     this.collapsed = !this.sidebarOpened
   },
   mounted () {

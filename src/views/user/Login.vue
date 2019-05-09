@@ -193,10 +193,10 @@ export default {
           const loginParams = { ...values }
           delete loginParams.username
           loginParams[!state.loginType ? 'email' : 'username'] = values.username
-/*
           loginParams.password = md5(values.password)
-*/
+/*
           loginParams.password = values.password
+*/
           Login(loginParams)
             .then((res) => {
               console.log(res + '---------')
@@ -258,7 +258,7 @@ export default {
     },
     loginSuccess (res) {
       console.log(res)
-      this.$router.push({ name: 'dashboard' })
+      this.$router.push({ name: 'Analysis' })
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {
         this.$notification.success({

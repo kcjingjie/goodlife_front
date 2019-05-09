@@ -1,7 +1,7 @@
 import { axios } from '@/utils/request'
 
 const api = {
-  user: '/user',
+  user: '/user/userList',
   role: '/role',
   service: '/service',
   permission: '/permission',

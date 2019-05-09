@@ -1,8 +1,8 @@
 <template>
   <div class="page-header-index-wide">
     <a-row :gutter="24">
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" title="总销售额" total="￥126,560">
+      <a-col :sm="24" :md="12" :xl="12" :style="{ marginBottom: '24px' }">
+        <chart-card :loading="loading" title="总上传量" :total="String(chartData.videoCount)">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
           </a-tooltip>
@@ -16,10 +16,10 @@
               11%
             </trend>
           </div>
-          <template slot="footer">日均销售额<span>￥ 234.56</span></template>
+          <template slot="footer">日均上传量<span> {{chartData.average | NumberFormat}}</span></template>
         </chart-card>
       </a-col>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
+      <a-col :sm="24" :md="12" :xl="12" :style="{ marginBottom: '24px' }">
         <chart-card :loading="loading" title="访问量" :total="8846 | NumberFormat">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
@@ -30,7 +30,7 @@
           <template slot="footer">日访问量<span> {{ '1234' | NumberFormat }}</span></template>
         </chart-card>
       </a-col>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
+<!--      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
         <chart-card :loading="loading" title="支付笔数" :total="6560 | NumberFormat">
           <a-tooltip title="指标说明" slot="action">
             <a-icon type="info-circle-o" />
@@ -52,15 +52,15 @@
           <template slot="footer">
             <trend flag="down" style="margin-right: 16px;">
               <span slot="term">同周比</span>
-              12%
+              15%
             </trend>
             <trend flag="up">
               <span slot="term">日环比</span>
-              80%
+              20%
             </trend>
           </template>
         </chart-card>
-      </a-col>
+      </a-col>-->
     </a-row>
 
     <a-card :loading="loading" :bordered="false" :body-style="{padding: '0'}">
@@ -75,13 +75,13 @@
             </div>
             <a-range-picker :style="{width: '256px'}" />
           </div>
-          <a-tab-pane loading="true" tab="销售额" key="1">
+          <a-tab-pane loading="true" tab="上传量" key="1">
             <a-row>
               <a-col :xl="16" :lg="12" :md="12" :sm="24" :xs="24">
-                <bar title="销售额排行" />
+                <bar title="上传类别排行" />
               </a-col>
               <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <rank-list title="门店销售排行榜" :list="rankList"/>
+                <rank-list title="热点视频排行榜" :list="rankList"/>
               </a-col>
             </a-row>
           </a-tab-pane>
@@ -154,6 +154,7 @@ import MiniProgress from '@/components/chart/MiniProgress'
 import RankList from '@/components/chart/RankList'
 import Bar from '@/components/chart/Bar'
 import Trend from '@/components/Trend'
+import { getVideoChartData } from '@/api/video'
 
 const rankList = []
 for (let i = 0; i < 7; i++) {
@@ -179,13 +180,22 @@ export default {
   data () {
     return {
       loading: true,
-      rankList
+      rankList,
+      chartData: {
+        average: '',
+        sevenDays: '',
+        totalDays: '',
+        videoCount: ''
+      }
     }
   },
   created () {
     setTimeout(() => {
       this.loading = !this.loading
     }, 1000)
+    getVideoChartData().then(res => {
+      this.chartData = res.data
+    })
   }
 }
 </script>

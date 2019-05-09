@@ -31,21 +31,16 @@ export function getSmsCaptcha (parameter) {
 
 export function getInfo () {
   return axios({
-    url: '/user/info',
-    method: 'get',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    url: '/auth/user/info',
+    method: 'get'
   })
 }
 
-export function logout () {
+export function logout (parameter) {
   return axios({
     url: '/auth/logout',
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    method: 'POST',
+    data: QS.stringify(parameter)
   })
 }
 

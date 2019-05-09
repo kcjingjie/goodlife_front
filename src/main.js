@@ -7,7 +7,12 @@ import { VueAxios } from '@/utils/request' // axios 不建议引入到 Vue 原�
 
 import './core/use'
 import bootstrap from './core/bootstrap'
+/**
+ * 关闭权限控制
+ */
+/*
 import '@/permission' // permission control
+*/
 import '@/utils/filter' // global filter
 
 Vue.config.productionTip = false
