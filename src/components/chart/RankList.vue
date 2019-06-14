@@ -4,7 +4,7 @@
     <ul class="list">
       <li :key="index" v-for="(item, index) in list">
         <span :class="index < 3 ? 'active' : null">{{ index + 1 }}</span>
-        <span>{{ item.name }}</span>
+        <span><a @click="handleClick(item.id)">{{  item.name.length > 10 ? item.name.substr(0, 10) + "..." : item.name }}</a></span>
         <span>{{ item.total }}</span>
       </li>
     </ul>
@@ -23,6 +23,11 @@ export default {
     list: {
       type: Array,
       default: null
+    }
+  },
+  methods: {
+    handleClick (id) {
+      this.$router.push({ name: 'videoPlay', params: { id: id } })
     }
   }
 }

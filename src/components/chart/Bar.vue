@@ -44,11 +44,14 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    data: {
+      type: Array,
+      default: null
     }
   },
   data () {
     return {
-      data,
       scale,
       tooltip
     }

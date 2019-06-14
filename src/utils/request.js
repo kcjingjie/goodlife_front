@@ -8,7 +8,7 @@ import router from '@/router'
 import NProgress from 'nprogress'
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'http://localhost:10014/', // api base_url
+  baseURL: 'http://localhost:10013/', // api base_url
   timeout: 6000 // 请求超时时间
 })
 service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'

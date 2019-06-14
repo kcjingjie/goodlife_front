@@ -4,58 +4,70 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="用户ID">
-              <a-input placeholder="请输入"/>
+            <a-form-item label="用户ID/用户名">
+              <a-input placeholder="请输入" v-model="queryParam.param"/>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="状态">
-              <a-select placeholder="请选择" default-value="0">
-                <a-select-option value="0">正常</a-select-option>
-                <a-select-option value="1">封号</a-select-option>
+              <a-select placeholder="请选择" default-value="2" v-model="queryParam.state">
+                <a-select-option value=2>全部</a-select-option>
+                <a-select-option value=0>正常</a-select-option>
+                <a-select-option value=1>封号</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <span class="table-page-search-submitButtons">
-              <a-button type="primary">查询</a-button>
-              <a-button style="margin-left: 8px">重置</a-button>
+              <a-button type="primary" @click="handleSearch">查询</a-button>
+              <a-button style="margin-left: 8px" @click="handleReset">重置</a-button>
             </span>
           </a-col>
         </a-row>
       </a-form>
     </div>
-    <a-table :rowSelection="rowSelection" :columns="columns" :dataSource="data">
-      <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
+    <a-table :columns="columns" :dataSource="data">
+      <template  slot="username" slot-scope="text, record">
+        <a  @click="handleUserDetail(record.id)" href="#">{{record.username}}</a>
+      </template>
+      <span slot="state" slot-scope="state">
+        <a-button type="primary" v-if="state== 0">正常</a-button>
+        <a-button type="danger" v-if="state== 1">封号</a-button>
+      </span>
+      <span slot="action" slot-scope="text,record">
+        <a-button type="primary" @click="handleEdit(record)">动作</a-button>
+      </span>
     </a-table>
-    <a-pagination :showSizeChanger = true @change="handleNumChange" @showSizeChange="onShowSizeChange" :defaultCurrent="1" :total="total"></a-pagination>
+    <a-pagination  :current="queryParam.pageNum" :showTotal="total => `Total ${total} items`" :showSizeChanger = true @change="handleNumChange" @showSizeChange="onShowSizeChange" :defaultCurrent="1" :total="total"></a-pagination>
     <a-modal
       title="操作"
       style="top: 20px;"
       :width="800"
       v-model="visible"
       @ok="handleOk"
+      @cancel="handleCancel"
+      :afterClose="handleClose"
     >
       <a-form :autoFormCreate="(form)=>{this.form = form}">
 
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="唯一识别码"
+          label="用户id"
           hasFeedback
           validateStatus="success"
         >
-          <a-input placeholder="唯一识别码" v-model="mdl.id" id="no" disabled="disabled" />
+          <a-input placeholder="唯一识别码" v-model="record.id" id="no" disabled="disabled" />
         </a-form-item>
 
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="角色名称"
+          label="用户名"
           hasFeedback
           validateStatus="success"
         >
-          <a-input placeholder="起一个名字" v-model="mdl.name" id="role_name" />
+          <a-input placeholder="起一个名字" v-model="record.username" id="role_name" />
         </a-form-item>
 
         <a-form-item
@@ -65,40 +77,13 @@
           hasFeedback
           validateStatus="warning"
         >
-          <a-select v-model="mdl.status">
-            <a-select-option value="1">正常</a-select-option>
-            <a-select-option value="2">禁用</a-select-option>
+          <a-select :defaultValue="record.state" v-model="record.state">
+            <a-select-option value="0">正常</a-select-option>
+            <a-select-option value="1">封号</a-select-option>
           </a-select>
         </a-form-item>
 
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="描述"
-          hasFeedback
-        >
-          <a-textarea :rows="5" v-model="mdl.describe" placeholder="..." id="describe"/>
-        </a-form-item>
-
         <a-divider />
-
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="拥有权限"
-          hasFeedback
-        >
-          <a-row :gutter="16" v-for="(permission, index) in mdl.permissions" :key="index">
-            <a-col :span="4">
-              {{ permission.permissionName }}：
-            </a-col>
-            <a-col :span="20">
-              <a-checkbox-group :options="permission.actionsOptions"/>
-            </a-col>
-          </a-row>
-
-        </a-form-item>
-
       </a-form>
     </a-modal>
 
@@ -106,7 +91,7 @@
 </template>
 
 <script>
-import { getUserList } from '@/api/user'
+import {  getUsersByParam ,updateUser} from '@/api/user'
 
 export default {
   name: 'TableList',
@@ -114,8 +99,13 @@ export default {
   },
   data () {
     return {
-      description: '用户列表以及。',
+      description: '用户列表以及用户状态信息。',
       data: [],
+      record:{
+        id:'',
+        username:'',
+        state: "1"
+      },
       total: 100,
       visible: false,
       labelCol: {
@@ -133,8 +123,10 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {
+        param: '',
         pageSize: 10,
-        pageNum: 1
+        pageNum: 1,
+        state: "2"
       },
       // 表头
       columns: [
@@ -144,11 +136,13 @@ export default {
         },
         {
           title: '用户名',
-          dataIndex: 'username'
+          dataIndex: 'username',
+          scopedSlots: { customRender: 'username' }
         },
         {
           title: '状态',
-          dataIndex: 'state'
+          dataIndex: 'state',
+          scopedSlots: { customRender: 'state' }
         },
         {
           title: '创建时间',
@@ -166,37 +160,82 @@ export default {
     }
   },
   created () {
-    getUserList(this.queryParam).then(res => {
+    getUsersByParam({ param: '', pageSize: 10, pageNum: 1, state: 2 }).then(res => {
       this.data = res.data.list
       this.total = res.data.total
     })
   },
   methods: {
     handleEdit (record) {
-      this.mdl = Object.assign({}, record)
-
-      this.mdl.permissions.forEach(permission => {
-        permission.actionsOptions = permission.actionEntitySet.map(action => {
-          return { label: action.describe, value: action.action, defaultCheck: action.defaultCheck }
-        })
-      })
-
+      this.record = record
+      this.record.state = record.state.toString()
       this.visible = true
     },
-    handleOk () {
+    handleSearch () {
+      this.queryParam.pageNum = 1
 
+      getUsersByParam(this.queryParam).then(res => {
+        this.data = res.data.list
+        this.total = res.data.total
+      })
+    },
+    handleOk () {
+      updateUser({userId:this.record.id,state:this.record.state}).then(res=>{
+        this.visible =false
+      })
+    },
+    handleCancel(){
+      getUsersByParam(this.queryParam).then(res => {
+        this.data = res.data.list
+        this.total = res.data.total
+      })
+    },
+    handleClose(){
+      getUsersByParam(this.queryParam).then(res => {
+        this.data = res.data.list
+        this.total = res.data.total
+      })
     },
     onChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
     onShowSizeChange (current, pageSize) {
-      debugger
-      console.log(pageSize)
+      if (this.queryParam.state === '全部') {
+        this.queryParam.state = 2
+      }
+      this.queryParam.pageNum = current
+      this.queryParam.pageSize = pageSize
+      getUsersByParam(this.queryParam).then(res => {
+        this.data = res.data.list
+        this.total = res.data.total
+      })
     },
     handleNumChange (current, pageSize) {
-      debugger
+      if (this.queryParam.state === '全部') {
+        this.queryParam.state = 2
+      }
+      this.queryParam.pageNum = current
+      this.queryParam.pageSize = pageSize
+      getUsersByParam(this.queryParam).then(res => {
+        this.data = res.data.list
+        this.total = res.data.total
+      })
+    },
+    handleReset () {
+      this.queryParam.pageNum = 1
+      this.queryParam.pageSize = 10
+      this.queryParam.param = ''
+      this.queryParam.state = '全部'
+      getUsersByParam({ param: '', pageSize: 10, pageNum: 1, state: 2 }).then(res => {
+        this.data = res.data.list
+        this.total = res.data.total
+      })
+    },
+    handleUserDetail(id){
+      this.$router.push({ name: 'authorDetail', params: { id: id } })
     }
+
   },
   watch: {
     /*

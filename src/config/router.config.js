@@ -9,7 +9,8 @@ export const asyncRouterMap = [
     name: 'index',
     component: BasicLayout,
     meta: { title: '首页' },
-    redirect: '/dashboard/workplace',
+    redirect: '/dashboard/analysis',
+    keepAlive: true,
     children: [
       // dashboard
       {
@@ -17,7 +18,7 @@ export const asyncRouterMap = [
         name: 'dashboard',
         redirect: '/dashboard/analysis',
         component: RouteView,
-        meta: { title: '用户数据', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
+        meta: { title: '工作台', keepAlive: false, icon: bxAnaalyse, permission: [ 'dashboard' ] },
         children: [
           {
             path: '/dashboard/analysis',
@@ -75,13 +76,15 @@ export const asyncRouterMap = [
       {
         path: '/list',
         name: 'list',
-        component: PageView,
+        component: RouteView,/*原先为PageView*/
+        hiddenHeaderContent: true,
         redirect: '/list/query-list',
-        meta: { title: '列表页', icon: 'table', permission: [ 'table' ] },
+        meta: { title: '用户管理', icon: 'table', permission: [ 'table' ] },
         children: [
           {
             path: '/list/query-list',
             name: 'QueryListWrapper',
+            hidden: true,
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/list/TableList'),
             meta: { title: '查询表格', keepAlive: true, permission: [ 'table' ] }
@@ -103,6 +106,7 @@ export const asyncRouterMap = [
           {
             path: '/list/user-list',
             name: 'UserList',
+            hiddenHeaderContent: true,
             component: () => import('@/views/list/UserList'),
             meta: { title: '用户列表', keepAlive: true, permission: [ 'table' ] }
           },
@@ -123,6 +127,7 @@ export const asyncRouterMap = [
           {
             path: '/list/permission-list',
             name: 'PermissionList',
+            hidden: true,
             component: () => import('@/views/list/PermissionList'),
             meta: { title: '权限列表', keepAlive: true, permission: [ 'table' ] }
           },
@@ -136,7 +141,7 @@ export const asyncRouterMap = [
           {
             path: '/list/card',
             name: 'CardList',
-            hidden: true,
+            hidden: false,
             component: () => import('@/views/list/CardList'),
             meta: { title: '卡片列表', keepAlive: true, permission: [ 'table' ] }
           },
@@ -145,6 +150,7 @@ export const asyncRouterMap = [
             name: 'SearchList',
             component: () => import('@/views/list/search/SearchLayout'),
             redirect: '/list/search/article',
+            hidden:true,
             meta: { title: '搜索列表', keepAlive: true, permission: [ 'table' ] },
             children: [
               {
@@ -176,7 +182,7 @@ export const asyncRouterMap = [
         name: 'profile',
         component: RouteView,
         redirect: '/profile/basic',
-        hidden: true,
+        hidden: false,
         meta: { title: '详情页', icon: 'profile', permission: [ 'profile' ] },
         children: [
           {
@@ -200,8 +206,8 @@ export const asyncRouterMap = [
         name: 'result',
         component: PageView,
         redirect: '/result/success',
-        hidden: true,
-        meta: { title: '结果页', icon: 'check-circle-o', permission: [ 'result' ] },
+        hidden: false,
+        meta: { title: '视频模块', icon: 'check-circle-o', permission: [ 'result' ] },
         children: [
           {
             path: '/result/success',
@@ -320,6 +326,38 @@ export const asyncRouterMap = [
             name: 'TestIconSelect',
             component: () => import('@/views/other/IconSelectorView'),
             meta: { title: 'IconSelector', keepAlive: true, permission: [ 'dashboard' ] }
+          }
+        ]
+      },
+      {
+        path: '/video',
+        name: 'video',
+        component: RouteView,
+        hidden: true,
+        mete: { title: '视频播放页' },
+        redirect: '/video/videoPlay',
+        children: [
+          {
+            path: '/video/videoPlay',
+            name: 'videoPlay',
+            component: () => import('@/views/video/videoDetail'),
+            meta: { title: '视频播放', keepAlive: true }
+          }
+        ]
+      },
+      {
+        path:"/author",
+        name: 'author',
+        component:RouteView,
+        hidden:true,
+        mete: {title:'用户的详情页'},
+        redirect:'/author/authorDetail',
+        children:[
+          {
+            path:'/author/authorDetail',
+            name:'authorDetail',
+            component:()=> import('@/views/authorPersonal/center/Index'),
+            meta:{title:'用户的个人信息',keepAlive:false}
           }
         ]
       }
